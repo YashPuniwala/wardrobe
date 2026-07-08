@@ -10,7 +10,7 @@ import { launchGarmentCamera } from '@/utils/camera';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const modelSilhouette = 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg';
+const modelSilhouette = Image.resolveAssetSource(require('@/assets/images/men-top1.webp')).uri;
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 

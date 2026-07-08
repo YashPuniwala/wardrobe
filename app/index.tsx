@@ -11,7 +11,7 @@ import { Icon, iconNames } from '@/components/ui/Icon';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useProfileStore } from '@/store/useProfileStore';
 
-const HERO_IMAGE = 'https://images.pexels.com/photos/2589653/pexels-photo-2589653.jpeg';
+const HERO_IMAGE = Image.resolveAssetSource(require('@/assets/images/men-top1.webp')).uri;
 
 export default function WelcomeScreen() {
   const router = useRouter();

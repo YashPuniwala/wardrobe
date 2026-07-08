@@ -13,7 +13,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-const silhouetteImage = 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg';
+const silhouetteImage = Image.resolveAssetSource(require('@/assets/images/men-top1.webp')).uri;
 
 export default function DressingRoomPreviewScreen() {
   const router = useRouter();

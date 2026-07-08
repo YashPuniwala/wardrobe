@@ -15,19 +15,19 @@ const slides = [
     id: '1',
     title: 'Your closet, reimagined',
     subtitle: 'Photograph every garment and let Fits organize your wardrobe into a beautiful, searchable collection.',
-    image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
+    image: Image.resolveAssetSource(require('@/assets/images/men-jeans1.png')).uri,
   },
   {
     id: '2',
     title: 'AI-styled outfits, instantly',
     subtitle: 'Chat with your personal AI Stylist to get outfit ideas pulled straight from the clothes you already own.',
-    image: 'https://images.pexels.com/photos/2589653/pexels-photo-2589653.jpeg',
+    image: Image.resolveAssetSource(require('@/assets/images/men-top1.webp')).uri,
   },
   {
     id: '3',
     title: 'Plan your week in seconds',
     subtitle: 'Lay out your looks day by day so every morning starts with a ready-to-go fit.',
-    image: 'https://images.pexels.com/photos/19090/pexels-photo.jpg',
+    image: Image.resolveAssetSource(require('@/assets/images/men-shoes1.png')).uri,
   },
 ];
 

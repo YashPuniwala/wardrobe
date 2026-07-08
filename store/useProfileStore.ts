@@ -22,7 +22,7 @@ export const useProfileStore = create<ProfileState>()(
       markIntroSeen: () => set({ hasSeenIntro: true }),
     }),
     {
-      name: 'fits-profile',
+      name: 'fits-profile-v2',
       storage: createJSONStorage(() => AsyncStorage),
     }
   )

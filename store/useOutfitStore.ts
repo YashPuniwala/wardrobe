@@ -105,7 +105,7 @@ export const useOutfitStore = create<OutfitState>()(
       getOutfit: (id) => get().outfits.find((o) => o.id === id),
     }),
     {
-      name: 'fits-outfits',
+      name: 'fits-outfits-v2',
       storage: createJSONStorage(() => AsyncStorage),
     }
   )

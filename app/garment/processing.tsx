@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
@@ -41,7 +41,7 @@ export default function ProcessingScreen() {
         const randomCat = categories[Math.floor(Math.random() * categories.length)];
         const colors_arr = ['#e8d5c4', '#3a3a3a', '#c4a882', '#8a7960', '#6b4e3a'];
         addItem({
-          imageUri: (imageUri as string) || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
+          imageUri: (imageUri as string) || Image.resolveAssetSource(require('@/assets/images/men-top1.webp')).uri,
           category: randomCat,
           name: `New ${randomCat.charAt(0).toUpperCase() + randomCat.slice(1, -1)}`,
           color: colors_arr[Math.floor(Math.random() * colors_arr.length)],

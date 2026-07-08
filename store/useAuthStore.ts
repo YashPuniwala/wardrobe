@@ -20,7 +20,7 @@ export const useAuthStore = create<AuthState>()(
       completeQuiz: () => set({ hasCompletedQuiz: true }),
     }),
     {
-      name: 'fits-auth',
+      name: 'fits-auth-v2',
       storage: createJSONStorage(() => AsyncStorage),
     }
   )
