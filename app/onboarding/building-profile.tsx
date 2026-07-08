@@ -9,8 +9,9 @@ import Animated, {
   withSpring,
   Easing,
 } from 'react-native-reanimated';
-import { colors, typography, radii, shadow } from '@/constants/theme';
+import { colors, typography, radii, spacing, shadow } from '@/constants/theme';
 import { Icon, iconNames } from '@/components/ui/Icon';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const steps = [
   { id: 'analyze', label: 'Analyzing your style', icon: iconNames.autoAwesome },
@@ -34,6 +35,7 @@ export default function BuildingProfileScreen() {
 
     timers.push(
       setTimeout(() => {
+        useAuthStore.getState().completeQuiz();
         router.replace('/(tabs)/wardrobe');
       }, 2000)
     );
@@ -46,7 +48,7 @@ export default function BuildingProfileScreen() {
       <SafeAreaView style={styles.safe}>
         <View style={styles.content}>
           <View style={styles.iconWrap}>
-            <Icon name={iconNames.autoAwesome} size={40} color={colors.primary} />
+            <Icon name={iconNames.autoAwesome} size={36} color={colors.primary} />
           </View>
           <Text style={styles.title}>Building your style profile</Text>
           <Text style={styles.subtitle}>Personalizing Fits just for you…</Text>
@@ -147,23 +149,23 @@ function AnimatedProgressFill({ progress }: { progress: number }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   safe: { flex: 1 },
-  content: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40 },
+  content: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.screenMargin },
   iconWrap: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     backgroundColor: colors.surfaceContainerLow,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: spacing.stackMd,
   },
   title: { ...typography.h1, fontSize: 22, textAlign: 'center' },
-  subtitle: { ...typography.bodySm, color: colors.onSurfaceVariant, marginTop: 8 },
-  steps: { width: '100%', gap: 12, marginTop: 32 },
+  subtitle: { ...typography.bodySm, color: colors.onSurfaceVariant, marginTop: spacing.stackSm },
+  steps: { width: '100%', gap: 12, marginTop: spacing.stackLg },
   stepRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
+    gap: 12,
     backgroundColor: colors.surfaceContainerLowest,
     borderRadius: radii.lg,
     padding: 14,
@@ -189,7 +191,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: colors.surfaceContainerHigh,
     overflow: 'hidden',
-    marginTop: 28,
+    marginTop: spacing.stackLg,
   },
   progressFill: {
     height: '100%',

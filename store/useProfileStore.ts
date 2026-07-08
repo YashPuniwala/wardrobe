@@ -9,17 +9,19 @@ interface ProfileState {
   setName: (name: string) => void;
   setEmail: (email: string) => void;
   markIntroSeen: () => void;
+  resetProfile: () => void;
 }
 
 export const useProfileStore = create<ProfileState>()(
   persist(
     (set) => ({
-      name: 'Alex',
+      name: '',
       email: '',
       hasSeenIntro: false,
       setName: (name) => set({ name }),
       setEmail: (email) => set({ email }),
       markIntroSeen: () => set({ hasSeenIntro: true }),
+      resetProfile: () => set({ name: '', email: '' }),
     }),
     {
       name: 'fits-profile-v2',

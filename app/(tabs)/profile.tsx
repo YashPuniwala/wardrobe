@@ -8,6 +8,8 @@ import { Card } from '@/components/ui/Card';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useWardrobeStore } from '@/store/useWardrobeStore';
 import { useOutfitStore } from '@/store/useOutfitStore';
+import { useProfileStore } from '@/store/useProfileStore';
+import { useQuizStore } from '@/store/useQuizStore';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -15,6 +17,7 @@ const menuItems = [
   { id: 'palette', label: 'Your Palette', icon: iconNames.palette, screen: '/palette/your-palette' },
   { id: 'dressing', label: 'Dressing Room', icon: iconNames.checkroom, screen: '/dressing-room/o1' },
   { id: 'favorites', label: 'Favorites', icon: iconNames.favorite, screen: '/(tabs)/outfits' },
+  { id: 'styleQuiz', label: 'Retake Style Quiz', icon: iconNames.autoAwesome, screen: '/onboarding/style-quiz' },
   { id: 'settings', label: 'Settings', icon: iconNames.settings, screen: '/profile/settings' },
   { id: 'help', label: 'Help & Support', icon: iconNames.help, screen: '/profile/help' },
   { id: 'logout', label: 'Log out', icon: iconNames.logout, screen: 'logout' },
@@ -25,11 +28,17 @@ export default function ProfileScreen() {
   const { logout } = useAuthStore();
   const { items } = useWardrobeStore();
   const { outfits } = useOutfitStore();
+  const { name, email } = useProfileStore();
 
   const handleMenu = (item: typeof menuItems[0]) => {
     if (item.screen === 'logout') {
       logout();
+      useProfileStore.getState().resetProfile();
+      useQuizStore.getState().reset();
       router.replace('/');
+    } else if (item.id === 'styleQuiz') {
+      useAuthStore.getState().setHasCompletedQuiz(false);
+      router.push('/onboarding/style-quiz');
     } else if (item.screen) {
       router.push(item.screen as any);
     }
@@ -48,8 +57,8 @@ export default function ProfileScreen() {
               <Icon name={iconNames.person} size={36} color={colors.onPrimary} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.name}>Alex Rivera</Text>
-              <Text style={styles.email}>alex.rivera@example.com</Text>
+              <Text style={styles.name}>{name || 'Stylish User'}</Text>
+              <Text style={styles.email}>{email || 'your@email.com'}</Text>
               <View style={styles.proBadge}>
                 <Icon name={iconNames.star} size={12} color={colors.onSecondaryContainer} />
                 <Text style={styles.proText}>FITS PRO</Text>

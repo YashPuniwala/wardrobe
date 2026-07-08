@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Image, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Image, Modal, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, withSpring, Easing, runOnJS } from 'react-native-reanimated';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, withSpring, Easing } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { colors, typography, radii, spacing, shadow } from '@/constants/theme';
@@ -10,11 +10,14 @@ import { Button } from '@/components/ui/Button';
 import { Icon, iconNames } from '@/components/ui/Icon';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useProfileStore } from '@/store/useProfileStore';
+import { useQuizStore } from '@/store/useQuizStore';
 
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const HERO_IMAGE = Image.resolveAssetSource(require('@/assets/images/men-top1.webp')).uri;
 
 export default function WelcomeScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { login, hasCompletedQuiz } = useAuthStore();
   const { hasSeenIntro } = useProfileStore();
   const [loading, setLoading] = useState<string | null>(null);
@@ -63,9 +66,15 @@ export default function WelcomeScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setLoading(method);
     setTimeout(() => {
+      useQuizStore.getState().reset();
+      const profileStore = useProfileStore.getState();
+      profileStore.setEmail(method === 'google' ? 'google.user@example.com' : 'apple.user@example.com');
+      
       login();
       setLoading(null);
-      if (hasCompletedQuiz) {
+      
+      const freshHasCompletedQuiz = useAuthStore.getState().hasCompletedQuiz;
+      if (freshHasCompletedQuiz) {
         router.replace('/(tabs)/wardrobe');
       } else {
         router.replace('/onboarding/style-quiz');
@@ -76,6 +85,14 @@ export default function WelcomeScreen() {
   const handleLogin = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     login();
+    useAuthStore.getState().completeQuiz();
+    const profileStore = useProfileStore.getState();
+    if (!profileStore.email) {
+      profileStore.setEmail('user@example.com');
+    }
+    if (!profileStore.name) {
+      profileStore.setName('Stylish User');
+    }
     router.replace('/(tabs)/wardrobe');
   };
 
@@ -90,7 +107,7 @@ export default function WelcomeScreen() {
       style={styles.container}
     >
       <SafeAreaView style={styles.safe}>
-        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <View style={styles.content}>
           <View style={styles.logoContainer}>
             <Animated.View style={[styles.logoMark, logoAnimatedStyle]}>
               <View style={styles.logoTriangle} />
@@ -159,7 +176,7 @@ export default function WelcomeScreen() {
               </TouchableOpacity>
             </View>
           </View>
-        </ScrollView>
+        </View>
       </SafeAreaView>
 
       <LegalModal type={showLegal} onClose={() => setShowLegal(null)} />
@@ -197,17 +214,16 @@ function LegalModal({ type, onClose }: { type: 'terms' | 'privacy' | null; onClo
 const styles = StyleSheet.create({
   container: { flex: 1 },
   safe: { flex: 1 },
-  scroll: {
-    flexGrow: 1,
+  content: {
+    flex: 1,
     paddingHorizontal: spacing.screenMargin,
-    paddingVertical: 40,
     justifyContent: 'space-between',
   },
-  logoContainer: { alignItems: 'center', marginTop: 40 },
+  logoContainer: { alignItems: 'center', paddingTop: 24 },
   logoMark: {
-    width: 72,
-    height: 72,
-    borderRadius: 20,
+    width: 64,
+    height: 64,
+    borderRadius: 18,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
@@ -216,16 +232,16 @@ const styles = StyleSheet.create({
   logoTriangle: {
     width: 0,
     height: 0,
-    borderLeftWidth: 14,
-    borderRightWidth: 14,
-    borderBottomWidth: 24,
+    borderLeftWidth: 12,
+    borderRightWidth: 12,
+    borderBottomWidth: 20,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
     borderBottomColor: colors.onPrimary,
   },
   logoDiamond: {
     position: 'absolute',
-    bottom: 14,
+    bottom: 12,
     width: 8,
     height: 8,
     backgroundColor: colors.secondaryContainer,
@@ -233,8 +249,8 @@ const styles = StyleSheet.create({
   },
   wordmark: {
     ...typography.display,
-    fontSize: 40,
-    marginTop: 16,
+    fontSize: 36,
+    marginTop: 12,
     color: colors.onSurface,
     textAlign: 'center',
   },
@@ -247,19 +263,18 @@ const styles = StyleSheet.create({
   socialProof: {
     ...typography.caption,
     color: colors.outline,
-    marginTop: 6,
+    marginTop: 4,
     textAlign: 'center',
   },
   previewCard: {
     backgroundColor: colors.surfaceContainerLowest,
     borderRadius: radii.xl,
-    marginVertical: 32,
     overflow: 'hidden',
     ...shadow.soft,
   },
   previewImageWrap: {
     width: '100%',
-    height: 220,
+    height: Math.min(160, SCREEN_HEIGHT * 0.18),
     position: 'relative',
   },
   previewImage: { width: '100%', height: '100%' },
@@ -269,60 +284,62 @@ const styles = StyleSheet.create({
   },
   previewHeader: {
     position: 'absolute',
-    top: 16,
-    left: 16,
-    right: 16,
+    top: 12,
+    left: 12,
+    right: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 8,
   },
   previewIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 12,
+    width: 32,
+    height: 32,
+    borderRadius: 10,
     backgroundColor: 'rgba(150, 70, 60, 0.85)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   previewTitle: {
     ...typography.h2,
-    fontSize: 16,
+    fontSize: 15,
     color: colors.surfaceContainerLowest,
   },
   previewSubtitle: {
     ...typography.caption,
+    fontSize: 11,
     color: 'rgba(255, 248, 247, 0.85)',
     marginTop: 2,
   },
   curatingPill: {
     position: 'absolute',
-    bottom: 16,
-    left: 16,
+    bottom: 12,
+    left: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    gap: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     borderRadius: radii.pill,
     backgroundColor: colors.tertiaryContainer,
   },
   curatingText: {
     ...typography.label,
+    fontSize: 11,
     color: colors.onTertiaryContainer,
   },
-  buttonGroup: { gap: 12, paddingBottom: 20 },
+  buttonGroup: { gap: 10, paddingBottom: 16 },
   textLink: {
     ...typography.bodyLg,
     fontFamily: 'Inter_600SemiBold',
     textAlign: 'center',
     color: colors.primary,
-    paddingVertical: 12,
+    paddingVertical: 10,
   },
   textLinkSubtle: {
     ...typography.bodySm,
     textAlign: 'center',
     color: colors.onSurfaceVariant,
-    paddingVertical: 8,
+    paddingVertical: 6,
   },
   loginLink: {
     fontFamily: 'Inter_600SemiBold',
@@ -338,7 +355,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 6,
   },
   legalText: {
     ...typography.caption,

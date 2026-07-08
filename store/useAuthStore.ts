@@ -8,6 +8,7 @@ interface AuthState {
   login: () => void;
   logout: () => void;
   completeQuiz: () => void;
+  setHasCompletedQuiz: (completed: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -16,8 +17,9 @@ export const useAuthStore = create<AuthState>()(
       isLoggedIn: false,
       hasCompletedQuiz: false,
       login: () => set({ isLoggedIn: true }),
-      logout: () => set({ isLoggedIn: false }),
+      logout: () => set({ isLoggedIn: false, hasCompletedQuiz: false }),
       completeQuiz: () => set({ hasCompletedQuiz: true }),
+      setHasCompletedQuiz: (completed) => set({ hasCompletedQuiz: completed }),
     }),
     {
       name: 'fits-auth-v2',

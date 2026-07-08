@@ -139,7 +139,7 @@ export default function WardrobeScreen() {
           }
         >
           {/* Top bar with small wordmark */}
-          <View style={styles.topBar}>
+          <View style={[styles.topBar, styles.sectionContainer]}>
             <Text style={styles.wordmarkSmall}>Fits</Text>
             <View style={styles.topActions}>
               <Pressable onPress={() => setShowUpgrade(true)}>
@@ -160,12 +160,12 @@ export default function WardrobeScreen() {
           </View>
 
           {/* Time-aware greeting + weather chip */}
-          <View style={styles.greetingRow}>
+          <View style={[styles.greetingRow, styles.sectionContainer]}>
             <View style={{ flex: 1 }}>
               {loading ? (
                 <Skeleton width="60%" height={28} radius={8} />
               ) : (
-                <Text style={styles.greeting}>{greeting}, {name}</Text>
+                <Text style={styles.greeting}>{greeting}, {name || 'Stylish'}</Text>
               )}
             </View>
             {!loading && (
@@ -178,30 +178,34 @@ export default function WardrobeScreen() {
 
           {/* Stats strip */}
           {loading ? (
-            <Skeleton width="100%" height={20} radius={8} style={{ marginTop: 8 }} />
+            <View style={styles.sectionContainer}>
+              <Skeleton width="100%" height={20} radius={8} style={{ marginTop: 8 }} />
+            </View>
           ) : (
-            <Text style={styles.statsStrip}>
+            <Text style={[styles.statsStrip, styles.sectionContainer]}>
               {items.length} items · {outfits.length} outfits · {favoriteCount} favorites
             </Text>
           )}
 
           {/* Empty wardrobe prompt */}
           {!loading && items.length === 0 && (
-            <View style={styles.emptyWardrobeCard}>
-              <View style={styles.emptyWardrobeIcon}>
-                <Icon name={iconNames.addCircle} size={28} color={colors.primary} />
+            <View style={styles.sectionContainer}>
+              <View style={styles.emptyWardrobeCard}>
+                <View style={styles.emptyWardrobeIcon}>
+                  <Icon name={iconNames.addCircle} size={28} color={colors.primary} />
+                </View>
+                <Text style={styles.emptyWardrobeTitle}>Add your first garment</Text>
+                <Text style={styles.emptyWardrobeSubtitle}>
+                  Tap the Selfie quick action to photograph a piece and start building your wardrobe.
+                </Text>
               </View>
-              <Text style={styles.emptyWardrobeTitle}>Add your first garment</Text>
-              <Text style={styles.emptyWardrobeSubtitle}>
-                Tap the Selfie quick action to photograph a piece and start building your wardrobe.
-              </Text>
             </View>
           )}
 
           {/* Hero cards with entrance animation */}
           <AnimatedSection delay={0}>
             {loading ? (
-              <View style={styles.heroSkeletonRow}>
+              <View style={[styles.heroSkeletonRow, styles.sectionContainer]}>
                 <Skeleton width={SCREEN_WIDTH * 0.72} height={160} radius={24} />
                 <Skeleton width={SCREEN_WIDTH * 0.72} height={160} radius={24} />
               </View>
@@ -230,8 +234,11 @@ export default function WardrobeScreen() {
                     </View>
                     <Text style={[styles.heroTitle, { color: colors.onSurface }]}>Rate my fit</Text>
                     <Text style={[styles.heroSubtitle, { color: colors.onSurfaceVariant }]}>
-                      Suggestions…
+                      Get instant feedback on your current look
                     </Text>
+                    <View style={[styles.heroArrow, { backgroundColor: 'rgba(34, 26, 24, 0.08)' }]}>
+                      <Icon name={iconNames.arrowForward} size={18} color={colors.onSurface} />
+                    </View>
                   </View>
                 </Pressable>
               </ScrollView>
@@ -241,11 +248,11 @@ export default function WardrobeScreen() {
           {/* Quick actions */}
           <AnimatedSection delay={100}>
             {loading ? (
-              <View style={styles.quickActionSkeletonRow}>
+              <View style={[styles.quickActionSkeletonRow, styles.sectionContainer]}>
                 {[0,1,2,3].map((i) => <Skeleton key={i} width={64} height={64} radius={20} />)}
               </View>
             ) : (
-              <View style={styles.quickActions}>
+              <View style={[styles.quickActions, styles.sectionContainer]}>
                 {quickActions.map((action) => (
                   <QuickActionTile
                     key={action.id}
@@ -260,7 +267,7 @@ export default function WardrobeScreen() {
 
           {/* Recent Outfits */}
           <AnimatedSection delay={200}>
-            <View style={styles.sectionHeader}>
+            <View style={[styles.sectionHeader, styles.sectionContainer]}>
               <Text style={styles.sectionTitle}>Recent Outfits</Text>
               <Pressable onPress={() => router.push('/(tabs)/outfits')}>
                 <Text style={styles.viewAll}>View All</Text>
@@ -268,21 +275,23 @@ export default function WardrobeScreen() {
             </View>
 
             {loading ? (
-              <View style={styles.outfitScroll}>
+              <View style={[styles.outfitScroll, styles.sectionContainer]}>
                 {[0,1,2,3].map((i) => <SkeletonCard key={i} />)}
               </View>
             ) : outfits.length === 0 ? (
-              <View style={styles.emptyOutfitsCard}>
-                <View style={styles.emptyOutfitsIcon}>
-                  <Icon name={iconNames.autoAwesome} size={28} color={colors.primary} />
+              <View style={styles.sectionContainer}>
+                <View style={styles.emptyOutfitsCard}>
+                  <View style={styles.emptyOutfitsIcon}>
+                    <Icon name={iconNames.autoAwesome} size={28} color={colors.primary} />
+                  </View>
+                  <Text style={styles.emptyOutfitsTitle}>You haven't built a fit yet</Text>
+                  <Text style={styles.emptyOutfitsSubtitle}>
+                    Tap + to create your first look
+                  </Text>
+                  <Pressable onPress={() => router.push('/create-outfit/choose-method')} style={styles.emptyOutfitsButton}>
+                    <Text style={styles.emptyOutfitsButtonText}>Create an outfit</Text>
+                  </Pressable>
                 </View>
-                <Text style={styles.emptyOutfitsTitle}>You haven't built a fit yet</Text>
-                <Text style={styles.emptyOutfitsSubtitle}>
-                  Tap + to create your first look
-                </Text>
-                <Pressable onPress={() => router.push('/create-outfit/choose-method')} style={styles.emptyOutfitsButton}>
-                  <Text style={styles.emptyOutfitsButtonText}>Create an outfit</Text>
-                </Pressable>
               </View>
             ) : (
               <ScrollView
@@ -314,9 +323,11 @@ export default function WardrobeScreen() {
           {/* Stylist Tip */}
           <AnimatedSection delay={300}>
             {loading ? (
-              <Skeleton width="100%" height={72} radius={16} style={{ marginTop: 24 }} />
+              <View style={styles.sectionContainer}>
+                <Skeleton width="100%" height={72} radius={16} style={{ marginTop: 24 }} />
+              </View>
             ) : (
-              <Pressable onPress={() => router.push('/(tabs)/stylist')}>
+              <Pressable onPress={() => router.push('/(tabs)/stylist')} style={styles.sectionContainer}>
                 <View style={styles.stylistTip}>
                   <View style={styles.stylistTipIcon}>
                     <Icon name={stylistTips[tipIndex].icon} size={20} color={colors.secondary} />
@@ -553,7 +564,10 @@ function NotificationsSheet({ notifications }: { notifications: any[] }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   safe: { flex: 1 },
-  scroll: { paddingHorizontal: spacing.screenMargin, paddingBottom: 100 },
+  scroll: { paddingBottom: 24 },
+  sectionContainer: {
+    paddingHorizontal: spacing.screenMargin,
+  },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -583,7 +597,7 @@ const styles = StyleSheet.create({
   statsStrip: {
     ...typography.bodySm,
     color: colors.onSurfaceVariant,
-    marginTop: 6,
+    marginTop: 12,
   },
   emptyWardrobeCard: {
     backgroundColor: colors.surfaceContainerLowest,
@@ -605,7 +619,7 @@ const styles = StyleSheet.create({
   emptyWardrobeTitle: { ...typography.h2, fontSize: 18 },
   emptyWardrobeSubtitle: { ...typography.bodySm, color: colors.onSurfaceVariant, textAlign: 'center', marginTop: 6 },
   heroSkeletonRow: { flexDirection: 'row', gap: 12, paddingBottom: 8 },
-  heroScroll: { gap: 12, paddingBottom: 8 },
+  heroScroll: { paddingHorizontal: spacing.screenMargin, gap: 12, paddingBottom: 8 },
   heroCard: {
     width: SCREEN_WIDTH * 0.72,
     borderRadius: radii.xl,
@@ -669,7 +683,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: { ...typography.h2, fontSize: 18 },
   viewAll: { ...typography.caption, color: colors.primary, fontFamily: 'Inter_600SemiBold' },
-  outfitScroll: { flexDirection: 'row', gap: 12, paddingBottom: 8 },
+  outfitScroll: { flexDirection: 'row', gap: 12, paddingBottom: 8, paddingHorizontal: spacing.screenMargin },
   emptyOutfitsCard: {
     backgroundColor: colors.surfaceContainerLowest,
     borderRadius: radii.xl,
@@ -854,7 +868,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceContainerLow,
     overflow: 'hidden',
   },
-  searchItemImageContent: { width: '100%', height: '100%' },
+  searchItemImageContent: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
   searchItemName: { ...typography.caption, marginTop: 4, textAlign: 'center' },
   searchEmpty: { ...typography.bodyLg, color: colors.onSurfaceVariant, textAlign: 'center', marginTop: 40 },
 });

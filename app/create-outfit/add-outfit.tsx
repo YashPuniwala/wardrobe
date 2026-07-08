@@ -22,6 +22,7 @@ const categories: { id: GarmentCategory | 'all'; label: string }[] = [
   { id: 'bottoms', label: 'Bottoms' },
   { id: 'shoes', label: 'Shoes' },
   { id: 'outerwear', label: 'Outerwear' },
+  { id: 'accessories', label: 'Accessories' },
 ];
 
 const shortcuts = [
@@ -113,6 +114,7 @@ export default function AddOutfitScreen() {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
+          style={styles.filterScrollView}
           contentContainerStyle={styles.filterRow}
         >
           {categories.map((cat) => (
@@ -335,7 +337,16 @@ const styles = StyleSheet.create({
     ...shadow.soft,
   },
   shortcutLabel: { ...typography.caption, fontFamily: 'Inter_500Medium' },
-  filterRow: { paddingHorizontal: spacing.screenMargin, gap: 8, paddingBottom: 12 },
+  filterScrollView: {
+    flexGrow: 0,
+    height: 48,
+    marginBottom: 8,
+  },
+  filterRow: {
+    paddingHorizontal: spacing.screenMargin,
+    gap: 8,
+    alignItems: 'center',
+  },
   grid: { paddingHorizontal: spacing.screenMargin, paddingBottom: 160 },
   gridRow: { gap: 12, marginBottom: 12 },
   garmentTile: { flex: 1, maxWidth: '33.3%' },
@@ -351,7 +362,13 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: colors.primary,
   },
-  garmentImageContent: { width: '100%', height: '100%' },
+  garmentImageContent: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
   checkbox: {
     position: 'absolute',
     top: 8,

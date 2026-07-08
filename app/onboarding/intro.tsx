@@ -2,13 +2,12 @@ import { useState, useRef } from 'react';
 import { View, Text, StyleSheet, Pressable, FlatList, Image, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, runOnJS } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { colors, typography, radii, spacing, shadow } from '@/constants/theme';
 import { Button } from '@/components/ui/Button';
 import { useProfileStore } from '@/store/useProfileStore';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const slides = [
   {
@@ -66,11 +65,13 @@ export default function IntroCarousel() {
     }
   };
 
+  const imageHeight = Math.min(SCREEN_WIDTH * 0.95, SCREEN_HEIGHT * 0.42);
+
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safe}>
-        <View style={[styles.topBar, { paddingTop: 8 }]}>
-          <View style={{ width: 40 }} />
+        <View style={styles.topBar}>
+          <View style={{ width: 44 }} />
           <View style={styles.dots}>
             {slides.map((_, i) => (
               <View
@@ -79,7 +80,7 @@ export default function IntroCarousel() {
               />
             ))}
           </View>
-          <Pressable onPress={handleSkip} style={styles.skipButton}>
+          <Pressable onPress={handleSkip} style={styles.skipButton} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
             <Text style={styles.skipText}>Skip</Text>
           </Pressable>
         </View>
@@ -95,7 +96,7 @@ export default function IntroCarousel() {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.slide}>
-              <View style={styles.imageWrap}>
+              <View style={[styles.imageWrap, { height: imageHeight }]}>
                 <Image source={{ uri: item.image }} style={styles.heroImage} resizeMode="cover" />
                 <View style={styles.imageOverlay} />
               </View>
@@ -107,7 +108,7 @@ export default function IntroCarousel() {
           )}
         />
 
-        <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
+        <View style={[styles.footer, { paddingBottom: insets.bottom + 12 }]}>
           {currentIndex === slides.length - 1 ? (
             <Button label="Get Started" onPress={handleGetStarted} />
           ) : (
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.screenMargin,
-    paddingBottom: 16,
+    paddingVertical: 12,
   },
   dots: { flexDirection: 'row', gap: 8 },
   dot: {
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
     width: 24,
     backgroundColor: colors.primary,
   },
-  skipButton: { width: 40, alignItems: 'flex-end' },
+  skipButton: { width: 44, alignItems: 'flex-end' },
   skipText: {
     ...typography.label,
     color: colors.onSurfaceVariant,
@@ -152,7 +153,6 @@ const styles = StyleSheet.create({
   },
   imageWrap: {
     width: SCREEN_WIDTH - spacing.screenMargin * 2,
-    height: SCREEN_WIDTH * 1.1,
     borderRadius: radii.xl,
     overflow: 'hidden',
     ...shadow.soft,
@@ -162,21 +162,22 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(34, 26, 24, 0.08)',
   },
-  textWrap: { marginTop: 32, alignItems: 'center' },
+  textWrap: { marginTop: spacing.stackLg, alignItems: 'center' },
   title: {
     ...typography.h1,
-    fontSize: 26,
+    fontSize: 24,
     textAlign: 'center',
   },
   subtitle: {
     ...typography.bodyLg,
     color: colors.onSurfaceVariant,
     textAlign: 'center',
-    marginTop: 12,
-    lineHeight: 24,
+    marginTop: spacing.stackSm,
+    lineHeight: 22,
+    maxWidth: SCREEN_WIDTH - spacing.screenMargin * 2,
   },
   footer: {
     paddingHorizontal: spacing.screenMargin,
-    paddingTop: 16,
+    paddingTop: 12,
   },
 });
